@@ -95,6 +95,72 @@ class ApiController extends Controller
             ], 404);
         }
 
-        return response()->json(['status' => 'success', 'data' => $users], 200);
+        return response()->json([
+            'status' => 'success',
+            'count' => count($users),
+            'data' => $users
+        ], 200);
+    }
+
+
+    public function editUser(int $userId, Request $request)
+    {
+
+        //صحت وجود داشتن کاربر
+
+        $user = User::find($userId);
+        if (!$user) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'No User Found'
+            ], 404);
+        }
+
+        //درخواست اعتبار سنجی فیلد ها
+
+        $validator = Validator::make($request->all(), rules: [
+            'name' => 'required|min:4',
+            'email' => 'required|email'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => $validator->errors()
+            ], 400);
+        }
+
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'User Updated Successfully',
+            'data' => $user
+        ], 200);
+    }
+
+    //حدف کاربران
+    public function deleteUser(int $userId)
+    {
+
+        //صحت وجود داشتن کاربر براساس ای دی
+
+        $user = User::find($userId);
+        if (!$user) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'No User Found'
+            ], 404);
+        }
+
+        $user->delete(); //حذف کاربر
+
+        //پیام صحت حدف کاربر
+        return response()->json([
+            'status' => 'sucess',
+            'message' => 'User Deleted Successfully!',
+        ], 200);
     }
 }

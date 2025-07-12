@@ -18,3 +18,11 @@ Route::post('/login', [ApiController::class, 'login'])->name('login');
 //دربافت تمام کاربران 
 
 Route::get('/all-users', action: [ApiController::class, 'getAllUsers'])->name('getAllUsers');
+
+//ویرایش کاربران 
+
+Route::put('/user/{userId}', action: [ApiController::class, 'editUser'])->name('editUser');
+
+//حدف کاربران
+
+Route::delete('/user/{userId}', action: [ApiController::class, 'deleteUser'])->name('deleteUser');
