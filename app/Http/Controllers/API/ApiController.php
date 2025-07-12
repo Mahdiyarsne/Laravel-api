@@ -94,5 +94,7 @@ class ApiController extends Controller
                 'message' => 'No User Found',
             ], 404);
         }
+
+        return response()->json(['status' => 'success', 'data' => $users], 200);
     }
 }
