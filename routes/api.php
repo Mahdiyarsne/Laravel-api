@@ -33,5 +33,17 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
     Route::delete('/user/{userId}', action: [ApiController::class, 'deleteUser'])->name('deleteUser');
 
     //دسته بندی محصولات
+
     Route::post('/create-category', action: [ApiController::class, 'createCategory'])->name('createCategory');
+
+    //دریافت تمامی دسته بندی ها
+
+    Route::get('/categories', action: [ApiController::class, 'getAllCategories'])->name('getAllCategories');
+
+    //ویرایش دسته بندی
+
+    Route::post('/category/{id}', action: [ApiController::class, 'editCategory'])->name('editCategory');
+
+    //حذف دسنه بندی
+    Route::delete('/category/{id}', action: [ApiController::class, 'deleteCategory'])->name('deleteCategory');
 });

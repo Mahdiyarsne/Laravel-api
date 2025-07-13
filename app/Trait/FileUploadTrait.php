@@ -3,6 +3,7 @@
 
 namespace App\Trait;
 
+use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
 
 trait FileUploadTrait
@@ -20,6 +21,14 @@ trait FileUploadTrait
             $image->move(public_path($path), $imageName);
 
             return $path . '/' . $imageName;
+        }
+    }
+
+    //حدف فایل
+    function removeImage(string $path)
+    {
+        if (File::exists(public_path($path))) {
+            File::delete(public_path($path));
         }
     }
 }

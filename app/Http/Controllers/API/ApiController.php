@@ -15,9 +15,7 @@ use Illuminate\Support\Str;
 
 class ApiController extends Controller
 {
-
     use FileUploadTrait;
-
 
     //ثبت کاربر
     public function register(Request $request)
@@ -196,6 +194,82 @@ class ApiController extends Controller
             'status' => 'success',
             'message' => 'Category Created Successfully'
 
+        ], 200);
+    }
+
+    //دریافت تمامی دسته بندی
+    public function getAllCategories()
+    {
+        $categories = ProductCategory::get();
+
+        if (!$categories) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'No Categories Found'
+            ], 404);
+        }
+        return response()->json([
+            'status' => 'success',
+            'count' => count($categories),
+            'data' => $categories
+        ], 200);
+    }
+
+    //ویرایش دسته بندی ها
+
+    public function editCategory(Request $request, int $categoryId)
+    {
+
+        $category = ProductCategory::find($categoryId);
+
+        if (!$category) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'No Category Found'
+            ], 404);
+        }
+
+        $validator = Validator::make(data: $request->all(), rules: [
+            'name' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => $validator->errors()
+            ], 400);
+        }
+
+        $category->name = $request->name;
+        $imagePath = $this->uploadImage($request, 'image');
+        $category->image = isset($imagePath) ? $imagePath : $imagePath;
+        $category->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Category Edited Successfully'
+        ], 200);
+    }
+
+    //حذف دسته بندی  براساس ایدی 
+    public function deleteCategory(int $categoryId)
+    {
+        $category = ProductCategory::find($categoryId);
+
+        if (!$category) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'No Category Found'
+            ], 404);
+        }
+
+        $this->removeImage($category->image);
+
+        $category->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Category Deleted Successfully'
         ], 200);
     }
 }
