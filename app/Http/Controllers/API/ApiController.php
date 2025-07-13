@@ -5,15 +5,20 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\ProductCategory;
+use App\Trait\FileUploadTrait;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-
+use Illuminate\Support\Str;
 
 
 class ApiController extends Controller
 {
-    //
+
+    use FileUploadTrait;
+
+
     //ثبت کاربر
     public function register(Request $request)
     {
@@ -161,6 +166,36 @@ class ApiController extends Controller
         return response()->json([
             'status' => 'sucess',
             'message' => 'User Deleted Successfully!',
+        ], 200);
+    }
+
+
+    //دسته بندی محصولات
+
+    public function createCategory(Request $request)
+    {
+
+        $validator = Validator::make(data: $request->all(), rules: [
+
+            'name' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([], 400);
+        }
+
+        $data['name'] = $request->name;
+        $data['slug'] = Str::slug($request->name);
+        $imagePath = $this->uploadImage($request, 'image');
+        $data['image'] = isset($imagePath) ? $imagePath : '';
+
+        ProductCategory::create($data);
+
+        return response()->json([
+
+            'status' => 'success',
+            'message' => 'Category Created Successfully'
+
         ], 200);
     }
 }

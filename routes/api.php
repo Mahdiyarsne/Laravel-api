@@ -8,21 +8,30 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-//ثبت کاربر جدید 
-Route::post('/register', action: [ApiController::class, 'register'])->name('register');
 
-//ورود کاربر
+//گروه بندی مسیر ها
 
-Route::post('/login', [ApiController::class, 'login'])->name('login');
+Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
 
-//دربافت تمام کاربران 
+    //ثبت کاربر جدید 
+    Route::post('/register', action: [ApiController::class, 'register'])->name('register');
 
-Route::get('/all-users', action: [ApiController::class, 'getAllUsers'])->name('getAllUsers');
+    //ورود کاربر
 
-//ویرایش کاربران 
+    Route::post('/login', [ApiController::class, 'login'])->name('login');
 
-Route::put('/user/{userId}', action: [ApiController::class, 'editUser'])->name('editUser');
+    //دربافت تمام کاربران 
 
-//حدف کاربران
+    Route::get('/all-users', action: [ApiController::class, 'getAllUsers'])->name('getAllUsers');
 
-Route::delete('/user/{userId}', action: [ApiController::class, 'deleteUser'])->name('deleteUser');
+    //ویرایش کاربران 
+
+    Route::put('/user/{userId}', action: [ApiController::class, 'editUser'])->name('editUser');
+
+    //حدف کاربران
+
+    Route::delete('/user/{userId}', action: [ApiController::class, 'deleteUser'])->name('deleteUser');
+
+    //دسته بندی محصولات
+    Route::post('/create-category', action: [ApiController::class, 'createCategory'])->name('createCategory');
+});
