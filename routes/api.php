@@ -46,4 +46,8 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
 
     //حذف دسنه بندی
     Route::delete('/category/{id}', action: [ApiController::class, 'deleteCategory'])->name('deleteCategory');
+
+    //ساخت محصولات
+
+    Route::post('/create-product', action: [ApiController::class, 'createProduct'])->name('createProduct');
 });

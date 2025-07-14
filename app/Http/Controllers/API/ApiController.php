@@ -272,4 +272,8 @@ class ApiController extends Controller
             'message' => 'Category Deleted Successfully'
         ], 200);
     }
+
+    //ساخت محصولات 
+
+    public function createProduct(Request $request) {}
 }
