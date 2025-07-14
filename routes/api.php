@@ -50,4 +50,12 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
     //ساخت محصولات
 
     Route::post('/create-product', action: [ApiController::class, 'createProduct'])->name('createProduct');
+
+    //دریافت تمامی محصولات 
+
+    Route::get('/products', action: [ApiController::class, 'getAllProducts'])->name('getAllProducts');
+
+    // ویرایش محصولات 
+
+    Route::post('/product/{id}', action: [ApiController::class, 'editProduct'])->name('editProduct');
 });

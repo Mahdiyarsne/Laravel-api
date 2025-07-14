@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Trait\FileUploadTrait;
 use Illuminate\Support\Facades\Auth;
@@ -275,5 +276,101 @@ class ApiController extends Controller
 
     //ساخت محصولات 
 
-    public function createProduct(Request $request) {}
+    public function createProduct(Request $request)
+    {
+
+        $validator = Validator::make(data: $request->all(), rules: [
+            'name' => 'required',
+            'category_id' => 'required',
+            'price' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => $validator->errors()
+            ], 400);
+        }
+
+        $data['name'] = $request->name;
+        $data['slug'] = Str::slug($request->name);
+        $data['category_id'] = $request->category_id;
+        $imagePath = $this->uploadImage($request, 'image');
+        $data['image'] = isset($imagePath) ? $imagePath : '';
+        $data['price'] = $request->price;
+        $data['description'] = $request->description;
+
+        Product::create($data);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Product Created Successfully'
+        ], 200);
+    }
+
+    //دریافت تمامی محصولات
+
+    public function getAllProducts()
+    {
+
+        $products = Product::get();
+
+        if (!$products) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'No Product Founded'
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'count' => count($products),
+            'data' => $products
+        ], 200);
+    }
+
+    //ویرایش محصولات 
+    
+    public function editProduct(int $productId, Request $request)
+    {
+
+        $product = Product::find($productId);
+        if (!$product) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'No Product Found'
+            ], 404);
+        }
+
+        $validator = Validator::make(data: $request->all(), rules: [
+            'name' => 'required',
+            'category_id' => 'required',
+            'price' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => $validator->errors()
+            ], 400);
+        }
+
+        $product->name = $request->name;
+        $product->category_id = $request->category_id;
+        $imagePath = $this->uploadImage($request, 'image');
+        $product->image = isset($imagePath) ? $imagePath : '';
+        $product->price = $request->price;
+        $product->description = $request->description;
+        $product->status = $request->status;
+
+        $product->save();
+
+        return response()->json(
+            [
+                'status' => 'success',
+                'message' => 'Product Edited Successfully'
+            ],
+            200
+        );
+    }
 }
