@@ -330,7 +330,7 @@ class ApiController extends Controller
     }
 
     //ویرایش محصولات 
-    
+
     public function editProduct(int $productId, Request $request)
     {
 
@@ -358,7 +358,7 @@ class ApiController extends Controller
         $product->name = $request->name;
         $product->category_id = $request->category_id;
         $imagePath = $this->uploadImage($request, 'image');
-        $product->image = isset($imagePath) ? $imagePath : '';
+        $product->image = isset($imagePath) ? $imagePath : $imagePath;
         $product->price = $request->price;
         $product->description = $request->description;
         $product->status = $request->status;
