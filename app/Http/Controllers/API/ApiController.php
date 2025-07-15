@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Product;
 use App\Models\ProductCategory;
+use App\Models\ShippingMethod;
 use App\Trait\FileUploadTrait;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -253,7 +254,7 @@ class ApiController extends Controller
         ], 200);
     }
 
-    //حذف دسته بندی  براساس ایدی 
+    //حذف دسته بندی  براساس ایدی
     public function deleteCategory(int $categoryId)
     {
         $category = ProductCategory::find($categoryId);
@@ -275,7 +276,7 @@ class ApiController extends Controller
         ], 200);
     }
 
-    //ساخت محصولات 
+    //ساخت محصولات
 
     public function createProduct(Request $request)
     {
@@ -330,7 +331,7 @@ class ApiController extends Controller
         ], 200);
     }
 
-    //ویرایش محصولات 
+    //ویرایش محصولات
 
     public function editProduct(int $productId, Request $request)
     {
@@ -394,5 +395,106 @@ class ApiController extends Controller
             'status' => 'success',
             'message' => 'Product Deleted Successfully'
         ], 200);
+    }
+
+    //ساخت متدد حمل و نقل
+
+    public function createShippingMethod(Request $request)
+    {
+        $validator = Validator::make($request->all(), rules: [
+            'name' => 'required',
+            'method_code' => 'required',
+            'shipping_price' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => $validator->errors()
+            ], 400);
+        }
+
+        $data['name'] = $request->name;
+        $data['method_code'] = $request->method_code;
+        $data['shipping_price'] = $request->shipping_price;
+
+        ShippingMethod::create($data);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Shipping Method Created Successfully'
+        ], 200);
+    }
+
+    //دریافت تمامی حمل و نقل
+
+    public function getAllShippingMethods(){
+        $ShippingMethods= ShippingMethod::get();
+
+        if (!$ShippingMethods) {
+            return response()->json(
+                ['status' => 'fail',
+                 'message' => 'No Product Founded'
+                ],404
+            );
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'count' => count($ShippingMethods),
+            'data' => $ShippingMethods
+        ],200);
+    }
+
+
+    //ویرایش حمل و نقل
+    public function editShippingMethod(int $shippingMethodId, Request $request){
+        $shippingMethod = ShippingMethod::find($shippingMethodId);
+        if (!$shippingMethod) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'No Product Found'
+            ],404);
+        }
+
+        $validator = Validator::make(data: $request->all(), rules: [
+            'name' => 'required',
+            'method_code' => 'required',
+            'shipping_price' => 'required'
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => $validator->errors()
+
+            ],400);
+        }
+
+        $shippingMethod->name = $request->name;
+        $shippingMethod->method_code = $request->method_code;
+        $shippingMethod->shipping_price = $request->shipping_price;
+
+        $shippingMethod->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Shipping Method Edited Successfully'
+        ],200);
+    }
+
+    public  function  deleteShippingMethod(int $shippingMethodId){
+        $shippingMethod=ShippingMethod::find($shippingMethodId);
+
+        if (!$shippingMethod) {
+        return response()->json([
+            'status' => 'fail',
+            'message' => 'No Product Found'
+        ],404);
+        }
+        $shippingMethod->delete();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Shipping Method Deleted Successfully'
+        ],200);
     }
 }

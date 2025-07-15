@@ -13,18 +13,18 @@ Route::get('/user', function (Request $request) {
 
 Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
 
-    //ثبت کاربر جدید 
+    //ثبت کاربر جدید
     Route::post('/register', action: [ApiController::class, 'register'])->name('register');
 
     //ورود کاربر
 
     Route::post('/login', [ApiController::class, 'login'])->name('login');
 
-    //دربافت تمام کاربران 
+    //دربافت تمام کاربران
 
     Route::get('/all-users', action: [ApiController::class, 'getAllUsers'])->name('getAllUsers');
 
-    //ویرایش کاربران 
+    //ویرایش کاربران
 
     Route::put('/user/{userId}', action: [ApiController::class, 'editUser'])->name('editUser');
 
@@ -51,14 +51,29 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
 
     Route::post('/create-product', action: [ApiController::class, 'createProduct'])->name('createProduct');
 
-    //دریافت تمامی محصولات 
+    //دریافت تمامی محصولات
 
     Route::get('/products', action: [ApiController::class, 'getAllProducts'])->name('getAllProducts');
 
-    // ویرایش محصولات 
+    // ویرایش محصولات
 
     Route::post('/product/{id}', action: [ApiController::class, 'editProduct'])->name('editProduct');
 
-    //حذف محصولات 
+    //حذف محصولات
     Route::delete('/product/{id}', action: [ApiController::class, 'deleteProduct'])->name('deleteProduct');
+
+    //ساخت مسیر های حمل و نقل
+
+    Route::post('/create-shipping-method', action: [ApiController::class, 'createShippingMethod'])->name('createShippingMethod');
+
+    //دریافت تمامی متتد حمل و  نقل
+    Route::get('/shipping-methods',action:[ApiController::class, 'getAllShippingMethods'])->name('getAllShippingMethods');
+
+    //ویرایش  متدد حمل و نقل
+
+    Route::put('shipping-method/{id}', action: [ApiController::class, 'editShippingMethod'])->name('editShippingMethod');
+
+    //حدف متدد حمل و نقل
+
+    Route::delete('shipping-method/{id}', action: [ApiController::class, 'deleteShippingMethod'])->name('deleteShippingMethod');
 });
