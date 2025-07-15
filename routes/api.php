@@ -58,4 +58,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
     // ویرایش محصولات 
 
     Route::post('/product/{id}', action: [ApiController::class, 'editProduct'])->name('editProduct');
+
+    //حذف محصولات 
+    Route::delete('/product/{id}', action: [ApiController::class, 'deleteProduct'])->name('deleteProduct');
 });

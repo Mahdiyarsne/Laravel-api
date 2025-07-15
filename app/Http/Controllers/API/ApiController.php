@@ -52,6 +52,7 @@ class ApiController extends Controller
     }
 
     //ورود کاربر
+
     public function login(Request $request)
     {        //اعتبار سنجی
         $validator = Validator::make(data: $request->all(), rules: [
@@ -372,5 +373,26 @@ class ApiController extends Controller
             ],
             200
         );
+    }
+
+    //حذف محصولات براساس ایدی
+
+    public function deleteProduct(int $productId)
+    {
+        $product = Product::find($productId);
+        if (!$product) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'No Product Found'
+            ], 404);
+        }
+
+        $this->removeImage($product->image);
+        $product->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Product Deleted Successfully'
+        ], 200);
     }
 }
