@@ -63,14 +63,13 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
     Route::delete('/product/{id}', action: [ApiController::class, 'deleteProduct'])->name('deleteProduct');
 
     //ساخت مسیر های حمل و نقل
-
     Route::post('/create-shipping-method', action: [ApiController::class, 'createShippingMethod'])->name('createShippingMethod');
     Route::get('/shipping-methods',action:[ApiController::class, 'getAllShippingMethods'])->name('getAllShippingMethods');
     Route::put('/shipping-method/{id}', action: [ApiController::class, 'editShippingMethod'])->name('editShippingMethod');
     Route::delete('/shipping-method/{id}', action: [ApiController::class, 'deleteShippingMethod'])->name('deleteShippingMethod');
     Route::put('/change-shipping-method-status/{id}', action: [ApiController::class, 'changeShippingMethodStatus'])->name('changeShippingMethodStatus');
+   
     //ساخت متدد پرداخت
-
     Route::post('/create-payment-method',action: [ApiController::class, 'createPaymentMethod'])->name('createPaymentMethod');
     Route::get('/payment-method/{id}',action: [ApiController::class, 'getAllPaymentMethods'])->name('getAllPaymentMethods');
     Route::put('/payment-method/{id}', action: [ApiController::class, 'editPaymentMethod'])->name('editPaymentMethod');
