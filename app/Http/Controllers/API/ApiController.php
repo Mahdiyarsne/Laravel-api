@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\PaymentMethod;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Product;
@@ -495,6 +496,135 @@ class ApiController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Shipping Method Deleted Successfully'
+        ],200);
+
+
+    }
+
+    public function changeShippingMethodStatus(int $shippingMethodId){
+
+        $shippingMethod = ShippingMethod::find($shippingMethodId);
+        if (!$shippingMethod) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'No Product Found'
+            ],404);
+        }
+        $shippingMethod->status = $shippingMethod->status ==1 ? 0 : 1;
+        $shippingMethod->save();
+        return response()->json([
+            'status' => 'success',
+             'message' => 'Shipping Method Status Changed Successfully'
+        ],200);
+    }
+
+
+    //ایجاد متدد پرداخت
+
+    public  function createPaymentMethod(Request $request){
+        $validator = Validator::make(data:$request->all(),rules: [
+            'name' => 'required',
+            'method_code' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+               'status' => 'fail',
+               'message' => $validator->errors()
+            ]);
+        }
+
+        $data['name'] = $request->name;
+        $data['method_code'] = $request->method_code;
+
+        PaymentMethod::create($data);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Payment Method Created Successfully'
+        ],200);
+    }
+
+    public  function  getAllPaymentMethods(){
+        $paymentMethods = PaymentMethod::get();
+        if(!$paymentMethods){
+            return response()->json(
+                [
+                    'status' => 'fail',
+                    'message' => 'No PaymentMethod Founded'
+                ],404
+            );
+        }
+        return response()->json([
+            'status' => 'success',
+            'count' => count($paymentMethods),
+            'data' => $paymentMethods
+        ],200);
+    }
+
+    public  function  editPaymentMethod(int $paymentMethodId, Request $request){
+
+        $paymentMethod = PaymentMethod::find($paymentMethodId);
+
+        if(!$paymentMethod){
+            return response()->json(
+
+                ['status' =>'fail', 'message' => 'No Product Found'],404
+            );
+        }
+
+        $validator = Validator::make($request->all(), rules: [
+            'name' => 'required',
+            'method_code' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => $validator->errors()
+            ],400);
+        }
+
+         $paymentMethod->name = $request->name;
+        $paymentMethod->method_code = $request->method_code;
+
+        $paymentMethod->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Payment Method Edited Successfully'
+        ],200);
+    }
+
+    public function deletePaymentMethod(int $paymentMethodId){
+        $paymentMethod = PaymentMethod::find($paymentMethodId);
+        if (!$paymentMethod) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'No Product Found'
+            ],404);
+
+        }
+
+        $paymentMethod->delete();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Payment Method Deleted Successfully'
+        ],200);
+    }
+
+    public  function  changePaymentMethodStatus(int $paymentMethodId){
+        $paymentMethod = PaymentMethod::find($paymentMethodId);
+        if(!$paymentMethod){
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'No Product Found'
+            ],404);
+        }
+        $paymentMethod->status = $paymentMethod->status == 1 ? 0:1;
+        $paymentMethod->save();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Payment Method Status Changed Successfully'
         ],200);
     }
 }
