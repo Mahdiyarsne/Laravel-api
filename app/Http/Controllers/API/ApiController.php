@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\OrderItem;
 use App\Models\PaymentMethod;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Product;
+use App\Models\Order;
 use App\Models\ProductCategory;
 use App\Models\ShippingMethod;
 use App\Trait\FileUploadTrait;
@@ -429,14 +431,17 @@ class ApiController extends Controller
 
     //دریافت تمامی حمل و نقل
 
-    public function getAllShippingMethods(){
-        $ShippingMethods= ShippingMethod::get();
+    public function getAllShippingMethods()
+    {
+        $ShippingMethods = ShippingMethod::get();
 
         if (!$ShippingMethods) {
             return response()->json(
-                ['status' => 'fail',
-                 'message' => 'No Product Founded'
-                ],404
+                [
+                    'status' => 'fail',
+                    'message' => 'No Product Founded'
+                ],
+                404
             );
         }
 
@@ -444,18 +449,19 @@ class ApiController extends Controller
             'status' => 'success',
             'count' => count($ShippingMethods),
             'data' => $ShippingMethods
-        ],200);
+        ], 200);
     }
 
 
     //ویرایش حمل و نقل
-    public function editShippingMethod(int $shippingMethodId, Request $request){
+    public function editShippingMethod(int $shippingMethodId, Request $request)
+    {
         $shippingMethod = ShippingMethod::find($shippingMethodId);
         if (!$shippingMethod) {
             return response()->json([
                 'status' => 'fail',
                 'message' => 'No Product Found'
-            ],404);
+            ], 404);
         }
 
         $validator = Validator::make(data: $request->all(), rules: [
@@ -468,7 +474,7 @@ class ApiController extends Controller
                 'status' => 'fail',
                 'message' => $validator->errors()
 
-            ],400);
+            ], 400);
         }
 
         $shippingMethod->name = $request->name;
@@ -480,57 +486,58 @@ class ApiController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Shipping Method Edited Successfully'
-        ],200);
+        ], 200);
     }
 
-    public  function  deleteShippingMethod(int $shippingMethodId){
-        $shippingMethod=ShippingMethod::find($shippingMethodId);
+    public  function  deleteShippingMethod(int $shippingMethodId)
+    {
+        $shippingMethod = ShippingMethod::find($shippingMethodId);
 
         if (!$shippingMethod) {
-        return response()->json([
-            'status' => 'fail',
-            'message' => 'No Product Found'
-        ],404);
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'No Product Found'
+            ], 404);
         }
         $shippingMethod->delete();
         return response()->json([
             'status' => 'success',
             'message' => 'Shipping Method Deleted Successfully'
-        ],200);
-
-
+        ], 200);
     }
 
-    public function changeShippingMethodStatus(int $shippingMethodId){
+    public function changeShippingMethodStatus(int $shippingMethodId)
+    {
 
         $shippingMethod = ShippingMethod::find($shippingMethodId);
         if (!$shippingMethod) {
             return response()->json([
                 'status' => 'fail',
                 'message' => 'No Product Found'
-            ],404);
+            ], 404);
         }
-        $shippingMethod->status = $shippingMethod->status ==1 ? 0 : 1;
+        $shippingMethod->status = $shippingMethod->status == 1 ? 0 : 1;
         $shippingMethod->save();
         return response()->json([
             'status' => 'success',
-             'message' => 'Shipping Method Status Changed Successfully'
-        ],200);
+            'message' => 'Shipping Method Status Changed Successfully'
+        ], 200);
     }
 
 
     //ایجاد متدد پرداخت
 
-    public  function createPaymentMethod(Request $request){
-        $validator = Validator::make(data:$request->all(),rules: [
+    public  function createPaymentMethod(Request $request)
+    {
+        $validator = Validator::make(data: $request->all(), rules: [
             'name' => 'required',
             'method_code' => 'required',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
-               'status' => 'fail',
-               'message' => $validator->errors()
+                'status' => 'fail',
+                'message' => $validator->errors()
             ]);
         }
 
@@ -542,34 +549,38 @@ class ApiController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Payment Method Created Successfully'
-        ],200);
+        ], 200);
     }
 
-    public  function  getAllPaymentMethods(){
+    public  function  getAllPaymentMethods()
+    {
         $paymentMethods = PaymentMethod::get();
-        if(!$paymentMethods){
+        if (!$paymentMethods) {
             return response()->json(
                 [
                     'status' => 'fail',
                     'message' => 'No PaymentMethod Founded'
-                ],404
+                ],
+                404
             );
         }
         return response()->json([
             'status' => 'success',
             'count' => count($paymentMethods),
             'data' => $paymentMethods
-        ],200);
+        ], 200);
     }
 
-    public  function  editPaymentMethod(int $paymentMethodId, Request $request){
+    public  function  editPaymentMethod(int $paymentMethodId, Request $request)
+    {
 
         $paymentMethod = PaymentMethod::find($paymentMethodId);
 
-        if(!$paymentMethod){
+        if (!$paymentMethod) {
             return response()->json(
 
-                ['status' =>'fail', 'message' => 'No Product Found'],404
+                ['status' => 'fail', 'message' => 'No Product Found'],
+                404
             );
         }
 
@@ -581,10 +592,10 @@ class ApiController extends Controller
             return response()->json([
                 'status' => 'fail',
                 'message' => $validator->errors()
-            ],400);
+            ], 400);
         }
 
-         $paymentMethod->name = $request->name;
+        $paymentMethod->name = $request->name;
         $paymentMethod->method_code = $request->method_code;
 
         $paymentMethod->save();
@@ -592,39 +603,91 @@ class ApiController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Payment Method Edited Successfully'
-        ],200);
+        ], 200);
     }
 
-    public function deletePaymentMethod(int $paymentMethodId){
+    public function deletePaymentMethod(int $paymentMethodId)
+    {
         $paymentMethod = PaymentMethod::find($paymentMethodId);
         if (!$paymentMethod) {
             return response()->json([
                 'status' => 'fail',
                 'message' => 'No Product Found'
-            ],404);
-
+            ], 404);
         }
 
         $paymentMethod->delete();
         return response()->json([
             'status' => 'success',
             'message' => 'Payment Method Deleted Successfully'
-        ],200);
+        ], 200);
     }
 
-    public  function  changePaymentMethodStatus(int $paymentMethodId){
+    public  function  changePaymentMethodStatus(int $paymentMethodId)
+    {
         $paymentMethod = PaymentMethod::find($paymentMethodId);
-        if(!$paymentMethod){
+        if (!$paymentMethod) {
             return response()->json([
                 'status' => 'fail',
                 'message' => 'No Product Found'
-            ],404);
+            ], 404);
         }
-        $paymentMethod->status = $paymentMethod->status == 1 ? 0:1;
+        $paymentMethod->status = $paymentMethod->status == 1 ? 0 : 1;
         $paymentMethod->save();
         return response()->json([
             'status' => 'success',
             'message' => 'Payment Method Status Changed Successfully'
-        ],200);
+        ], 200);
+    }
+
+    //ساخت متدد های پرداخت
+    public function createOrder(Request $request)
+    {
+        $validator = Validator::make(data: $request->all(), rules: [
+            'user_id' => 'required',
+            'email' => 'required|email',
+            'shipping_price' => 'required',
+            'tax' => 'required',
+            'grand_total' => 'required',
+            'qty' => 'required',
+            'shipping_method_id' => 'required',
+            'payment_method_id' => 'required',
+            'cart_items' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => $validator->errors()
+            ], 400);
+        }
+
+        $data['user_id'] = $request->user_id;
+        $data['email'] = $request->email;
+        $data['shipping_price'] = $request->shipping_price;
+        $data['tax'] = $request->tax;
+        $data['grand_total'] = $request->grand_total;
+        $data['qty'] = $request->qty;
+        $data['shipping_method_id'] = $request->shipping_method_id;
+        $data['payment_method_id'] = $request->payment_method_id;
+
+        $order =  Order::create($data);
+
+        $orderId = $order->id;
+        $cartItems = $request->cart_items;
+
+        foreach ($cartItems as $cartItem) {
+            $orderData['order_id'] = $orderId;
+            $orderData['price'] = $cartItem['price'];
+            $orderData['product_id'] = $cartItem['product_id'];
+            $orderData['qty'] = $cartItem['qty'];
+
+            OrderItem::create($orderData);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Order Created Successfully'
+        ], 200);
     }
 }

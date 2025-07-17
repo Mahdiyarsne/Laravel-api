@@ -64,15 +64,18 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
 
     //ساخت مسیر های حمل و نقل
     Route::post('/create-shipping-method', action: [ApiController::class, 'createShippingMethod'])->name('createShippingMethod');
-    Route::get('/shipping-methods',action:[ApiController::class, 'getAllShippingMethods'])->name('getAllShippingMethods');
+    Route::get('/shipping-methods', action: [ApiController::class, 'getAllShippingMethods'])->name('getAllShippingMethods');
     Route::put('/shipping-method/{id}', action: [ApiController::class, 'editShippingMethod'])->name('editShippingMethod');
     Route::delete('/shipping-method/{id}', action: [ApiController::class, 'deleteShippingMethod'])->name('deleteShippingMethod');
     Route::put('/change-shipping-method-status/{id}', action: [ApiController::class, 'changeShippingMethodStatus'])->name('changeShippingMethodStatus');
-   
+
     //ساخت متدد پرداخت
-    Route::post('/create-payment-method',action: [ApiController::class, 'createPaymentMethod'])->name('createPaymentMethod');
-    Route::get('/payment-method/{id}',action: [ApiController::class, 'getAllPaymentMethods'])->name('getAllPaymentMethods');
+    Route::post('/create-payment-method', action: [ApiController::class, 'createPaymentMethod'])->name('createPaymentMethod');
+    Route::get('/payment-method', action: [ApiController::class, 'getAllPaymentMethods'])->name('getAllPaymentMethods');
     Route::put('/payment-method/{id}', action: [ApiController::class, 'editPaymentMethod'])->name('editPaymentMethod');
-    Route::delete('/payment-method/{id}',action: [ApiController::class,'deletePaymentMethod'])->name('deletePaymentMethod');
-    Route::put('/change-payment-method-status/{id}',action: [ApiController::class, 'changePaymentMethodStatus'])->name('changePaymentMethodStatus');
+    Route::delete('/payment-method/{id}', action: [ApiController::class, 'deletePaymentMethod'])->name('deletePaymentMethod');
+    Route::put('/change-payment-method-status/{id}', action: [ApiController::class, 'changePaymentMethodStatus'])->name('changePaymentMethodStatus');
+
+    //ساخت متتد های سفارش
+    Route::post('/create-order', action: [ApiController::class, 'createOrder'])->name('createOrder');
 });
