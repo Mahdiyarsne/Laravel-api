@@ -712,39 +712,75 @@ class ApiController extends Controller
         ], 200);
     }
 
-    public function changeOrderStatus(int $orderId, Request $request) {
+    public function changeOrderStatus(int $orderId, Request $request)
+    {
         $order = Order::find($orderId);
 
-        if(!$order){
+        if (!$order) {
             return response()->json([
                 'status' => 'fail',
-                'message' =>'No Order Founded'
-            ],404);
+                'message' => 'No Order Founded'
+            ], 404);
         }
 
-        $validator = Validator::make(data:$request->all(),rules:[
-         'order_status' => 'required'
+        $validator = Validator::make(data: $request->all(), rules: [
+            'order_status' => 'required'
 
         ]);
 
-        if($validator->fails()) {
+        if ($validator->fails()) {
 
-          return response()->json([
+            return response()->json([
 
-            'status' => 'fail',
-            'message' => $validator->errors()
+                'status' => 'fail',
+                'message' => $validator->errors()
 
-          ],400);
-
+            ], 400);
         }
 
         $order->order_status = $request->order_status;
         $order->save();
 
         return response()->json([
-         'status' => 'success',
-          'message' => 'order status changed Successfully'
+            'status' => 'success',
+            'message' => 'order status changed Successfully'
 
-        ],200);
-}
+        ], 200);
+    }
+
+    public function changePaymentStatus(int $orderId, Request $request)
+    {
+        $order = Order::find($orderId);
+
+        if (!$order) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'No Order Founded'
+            ], 404);
+        }
+
+        $validator = Validator::make(data: $request->all(), rules: [
+            'payment_status' => 'required'
+
+        ]);
+
+        if ($validator->fails()) {
+
+            return response()->json([
+
+                'status' => 'fail',
+                'message' => $validator->errors()
+
+            ], 400);
+        }
+
+        $order->payment_status = $request->payment_status;
+        $order->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'payment status changed Successfully'
+
+        ], 200);
+    }
 }
