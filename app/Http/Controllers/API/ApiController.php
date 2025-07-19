@@ -690,4 +690,61 @@ class ApiController extends Controller
             'message' => 'Order Created Successfully'
         ], 200);
     }
+
+    public function getAllOrders()
+    {
+        $orders = Order::get();
+
+        if (!$orders) {
+            return response()->json(
+                [
+                    'status' => 'fail',
+                    'message' => 'No Order Founded'
+                ],
+                404
+            );
+        }
+
+        return response()->json([
+            'status' => "success",
+            'count' => count($orders),
+            'data' => $orders
+        ], 200);
+    }
+
+    public function changeOrderStatus(int $orderId, Request $request) {
+        $order = Order::find($orderId);
+
+        if(!$order){
+            return response()->json([
+                'status' => 'fail',
+                'message' =>'No Order Founded'
+            ],404);
+        }
+
+        $validator = Validator::make(data:$request->all(),rules:[
+         'order_status' => 'required'
+
+        ]);
+
+        if($validator->fails()) {
+
+          return response()->json([
+
+            'status' => 'fail',
+            'message' => $validator->errors()
+
+          ],400);
+
+        }
+
+        $order->order_status = $request->order_status;
+        $order->save();
+
+        return response()->json([
+         'status' => 'success',
+          'message' => 'order status changed Successfully'
+
+        ],200);
+}
 }
