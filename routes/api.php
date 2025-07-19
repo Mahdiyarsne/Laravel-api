@@ -78,4 +78,6 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
 
     //ساخت متتد های سفارش
     Route::post('/create-order', action: [ApiController::class, 'createOrder'])->name('createOrder');
+    Route::get('/orders', action: [ApiController::class, 'getAllOrders'])->name('getAllOrders');
+    Route::put('/change-order-status/{order_id}', action: [ApiController::class, 'changeOrderStatus'])->name('changeOrderStatus');
 });
