@@ -81,4 +81,10 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
     Route::get('/orders', action: [ApiController::class, 'getAllOrders'])->name('getAllOrders');
     Route::put('/change-order-status/{order_id}', action: [ApiController::class, 'changeOrderStatus'])->name('changeOrderStatus');
     Route::put('/change-payment-status/{order_id}', action: [ApiController::class, 'changePaymentStatus'])->name('changePaymentStatus');
+    Route::get('/pending-orders', action: [ApiController::class, 'getPendingOrders'])->name('getPendingOrders');
+    Route::get('/processing-orders', action: [ApiController::class, 'getProcessingOrders'])->name('getProcessingOrders');
+    Route::get('/completed-orders', action: [ApiController::class, 'getCompletedOrders'])->name('getCompletedOrders');
+
+    //دریافت سفارشات کاربر
+    Route::get('/user/orders/{user_id}', action: [ApiController::class, 'getUserOrders'])->name('getUserOrders');
 });

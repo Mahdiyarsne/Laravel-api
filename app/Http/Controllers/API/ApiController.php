@@ -783,4 +783,83 @@ class ApiController extends Controller
 
         ], 200);
     }
+
+    public function getPendingOrders()
+    {
+        $orders = Order::where('order_status', 'pending')->get();
+
+        if (!$orders) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'No Order Founded'
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'count' => count($orders),
+            'data' => $orders
+        ]);
+    }
+
+    public function getProcessingOrders()
+    {
+        $orders = Order::where('order_status', 'processing')->get();
+        if (!$orders) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'No Order Founded'
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'count' => count($orders),
+            'data' => $orders
+        ], 200);
+    }
+
+    public function getCompletedOrders()
+    {
+        $orders = Order::where('order_status', 'completed')->get();
+        if (!$orders) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'No Order Founded'
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'count' => count($orders),
+            'data' => $orders
+        ], 200);
+    }
+
+    //دریافت سفارشات کاربر
+
+    public function getUserOrders(int $userId)
+    {
+        $user = User::find($userId);
+
+        if (!$user) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'No user found'
+            ], 404);
+        }
+        $orders = Order::where('user_id', $userId)->get();
+        if (!$orders) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'No order found'
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'count' => count($orders),
+            'data' => $orders
+        ], 200);
+    }
 }
