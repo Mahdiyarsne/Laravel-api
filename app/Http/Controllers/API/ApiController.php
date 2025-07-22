@@ -8,6 +8,7 @@ use App\Models\PaymentMethod;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Product;
+use App\Models\ProductReview;
 use App\Models\Order;
 use App\Models\ProductCategory;
 use App\Models\ShippingMethod;
@@ -1011,6 +1012,158 @@ class ApiController extends Controller
         return response()->json([
             'status' => 'success',
             'data' => $order
+        ], 200);
+    }
+
+
+    //بخش نظرات محصولات 
+    public function createProdutReview(Request $request)
+    {
+
+        //اعتبار سنجی
+        $validator = Validator::make($request->all(), rules: [
+
+            'user_id' => 'required',
+            'product_id' => 'required',
+            'rating' => 'required',
+            'review' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => $validator->errors()
+            ], 400);
+        }
+
+        $data = $request->all();
+
+        ProductReview::create($data);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Product review created'
+        ], 200);
+    }
+
+    //دریافت تمامی نظرات 
+    public function getProductReviews()
+    {
+        $productReviews = ProductReview::get();
+
+        if (!$productReviews) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'No product review Founded'
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'count' => count($productReviews),
+            'data' => $productReviews
+        ], 200);
+    }
+
+    //رد یا تایید نظرات
+
+    public function updateReviewStatus(int $reviewId, Request $request)
+    {
+        $review = ProductReview::find($reviewId);
+
+        if (!$review) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'Faild to load Review'
+            ], 404);
+        }
+
+
+        $review->status = $review->status == 1 ? 0 : 1;
+        $review->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Review status changed Successfully'
+
+        ], 200);
+    }
+
+
+    //حذف نظرات 
+    public function deleteReview(int $reviewId)
+    {
+        $review = ProductReview::find($reviewId);
+
+        if (!$review) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'Faild to load Review'
+            ], 404);
+        }
+
+        $review->delete();
+        return response()->json([
+            'status' => 'scuccess',
+            'message' => 'Review deleted'
+        ], 200);
+    }
+
+    //محصولات براساس نظرات
+    public function getReviewsByProduct(int $productId)
+    {
+
+        $product = Product::find($productId);
+
+        if (!$product) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'No product founded'
+            ], 404);
+        }
+
+        $reviews = ProductReview::where('product_id', $productId)->get();
+        if (!$reviews) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'No reviews founded'
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'count' => count($reviews),
+            'data' => $reviews
+        ], 200);
+    }
+
+
+
+    //نظرات براساس کاربران
+    public function getReviewsByUser(int $userId)
+    {
+
+        $user = Product::find($userId);
+
+        if (!$user) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'No user founded'
+            ], 404);
+        }
+
+        $reviews = ProductReview::where('user_id', $userId)->get();
+        if (!$reviews) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'No reviews founded'
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'count' => count($reviews),
+            'data' => $reviews
         ], 200);
     }
 }

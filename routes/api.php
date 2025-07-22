@@ -98,5 +98,10 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
     Route::get('/order/{order_id}', action: [ApiController::class, 'getOrderDetails'])->name('getOrderDetails');
 
     //بخش نظرات محصولات 
-    Route::post('/product/review', action: [ApiController::class, 'createProdutReview'])->name('createProdutReview');
+    Route::post('/product-review', action: [ApiController::class, 'createProdutReview'])->name('createProdutReview');
+    Route::get('/product-reviews', action: [ApiController::class, 'getProductReviews'])->name('getProductReviews');
+    Route::get('/reviews/{product_id}', action: [ApiController::class, 'getReviewsByProduct'])->name('getReviewsByProduct');
+    Route::get('/reviews/{user_id}', action: [ApiController::class, 'getReviewsByUser'])->name('getReviewsByUser');
+    Route::put('/product-review/{review_id}', action: [ApiController::class, 'updateReviewStatus'])->name('updateReviewStatus');
+    Route::delete('/product-review/{review_id}', action: [ApiController::class, 'deleteReview'])->name('deleteReview');
 });
