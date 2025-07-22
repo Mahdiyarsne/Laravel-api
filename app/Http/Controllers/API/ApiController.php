@@ -994,4 +994,23 @@ class ApiController extends Controller
             'message' => 'Deleted successfully'
         ], 200);
     }
+
+
+    //جزییات سفارشات 
+    public function getOrderDetails(int $orderId)
+    {
+        $order = Order::with(['orderItems'])->where('id', $orderId)->first();
+
+        if (!$order) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'Faild to load order'
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $order
+        ], 200);
+    }
 }

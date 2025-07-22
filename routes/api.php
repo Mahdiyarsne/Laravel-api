@@ -93,4 +93,10 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
     Route::get('/user/address/{user_id}', action: [ApiController::class, 'getUserAddresses'])->name('getUserAddresses');
     Route::put('/user/address/{address_id}', action: [ApiController::class, 'editUserAddress'])->name('editUserAddress');
     Route::delete('/user/address/{address_id}', action: [ApiController::class, 'deleteUserAddress'])->name('deleteUserAddress');
+
+    //جزییات سفارشات
+    Route::get('/order/{order_id}', action: [ApiController::class, 'getOrderDetails'])->name('getOrderDetails');
+
+    //بخش نظرات محصولات 
+    Route::post('/product/review', action: [ApiController::class, 'createProdutReview'])->name('createProdutReview');
 });
