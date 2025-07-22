@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->integer('user_id')->default(0);
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');;
             $table->string('email');
+            $table->foreignId('user_address_id')->constrained('user_addresses')->onDelete('cascade');
             $table->double('shipping_price')->nullable()->default(0.0);
             $table->double('tax')->nullable()->default(0.0);
             $table->double('grand_total')->default(0.0);

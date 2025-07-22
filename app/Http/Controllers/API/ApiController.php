@@ -11,6 +11,7 @@ use App\Models\Product;
 use App\Models\Order;
 use App\Models\ProductCategory;
 use App\Models\ShippingMethod;
+use App\Models\UserAddress;
 use App\Trait\FileUploadTrait;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -646,6 +647,7 @@ class ApiController extends Controller
         $validator = Validator::make(data: $request->all(), rules: [
             'user_id' => 'required',
             'email' => 'required|email',
+            'user_address_id' => 'required',
             'shipping_price' => 'required',
             'tax' => 'required',
             'grand_total' => 'required',
@@ -664,6 +666,7 @@ class ApiController extends Controller
 
         $data['user_id'] = $request->user_id;
         $data['email'] = $request->email;
+        $data['user_address_id'] = $request->user_address_id;
         $data['shipping_price'] = $request->shipping_price;
         $data['tax'] = $request->tax;
         $data['grand_total'] = $request->grand_total;
@@ -860,6 +863,135 @@ class ApiController extends Controller
             'status' => 'success',
             'count' => count($orders),
             'data' => $orders
+        ], 200);
+    }
+
+    //ایجاد آدرس کاربر
+
+    public function createUserAddress(Request $request)
+    {
+        $validator = Validator::make(data: $request->all(), rules: [
+
+            'user_id' => 'required',
+            'address_line_one' => 'required',
+            'city' => 'required',
+            'state' => 'required',
+            'zip' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => $validator->errors()
+
+            ], 400);
+        }
+
+        $user = User::find($request->user_id);
+        if (!$user) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'No user found'
+            ], 404);
+        }
+
+        $data = $request->all();
+        UserAddress::create($data);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Address create successfully'
+        ], 200);
+    }
+
+
+    //دریافت تمامی ادرس کاربران
+    public function getUserAddresses(int $userId)
+    {
+
+        $user = User::find($userId);
+        if (!$user) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'no user Founded'
+            ], 400);
+        }
+
+        $addresses = UserAddress::where('user_id', $userId)->get();
+
+        if (!$addresses) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'No userAddress found'
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'count' => count($addresses),
+            'data' => $addresses
+        ], 200);
+    }
+
+    //ویرایش ادرس کاربران
+    public function editUserAddress(int $addressId, Request $request)
+    {
+        $address = UserAddress::find($addressId);
+
+        if (!$address) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'No user address found'
+            ], 404);
+        }
+
+        $validator = Validator::make(data: $request->all(), rules: [
+            'user_id' => 'required',
+            'address_line_one' => 'required',
+            'city' => 'required',
+            'state' => 'required',
+            'zip' => 'required'
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'state' => 'fail',
+                'message' => $validator->errors()
+            ], 400);
+        }
+
+        $address->user_id = $request->user_id;
+        $address->address_line_one = $request->address_line_one;
+        $address->address_line_two = $request->address_line_two;
+        $address->city = $request->city;
+        $address->state = $request->state;
+        $address->zip = $request->zip;
+        $address->country = $request->country;
+
+        $address->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'user address updated sucessfully'
+        ], 200);
+    }
+
+
+    //حذف ادرس کاربر
+    public function deleteUserAddress(int $addressId)
+    {
+        $address = UserAddress::find($addressId);
+
+        if (!$address) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'No user address founded'
+            ], 404);
+        }
+
+        $address->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Deleted successfully'
         ], 200);
     }
 }

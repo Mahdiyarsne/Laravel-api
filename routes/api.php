@@ -87,4 +87,10 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
 
     //دریافت سفارشات کاربر
     Route::get('/user/orders/{user_id}', action: [ApiController::class, 'getUserOrders'])->name('getUserOrders');
+
+    //ادرس کاربر
+    Route::post('/user/address', action: [ApiController::class, 'createUserAddress'])->name('createUserAddress');
+    Route::get('/user/address/{user_id}', action: [ApiController::class, 'getUserAddresses'])->name('getUserAddresses');
+    Route::put('/user/address/{address_id}', action: [ApiController::class, 'editUserAddress'])->name('editUserAddress');
+    Route::delete('/user/address/{address_id}', action: [ApiController::class, 'deleteUserAddress'])->name('deleteUserAddress');
 });
